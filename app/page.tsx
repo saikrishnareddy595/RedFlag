@@ -10,7 +10,6 @@ import {
   ArrowRight,
   Clock,
   FileCheck2,
-  Flag,
   Gauge,
   Lock,
   LogOut,
@@ -23,6 +22,7 @@ import {
   Wand2,
   X,
 } from "lucide-react";
+import { Logo, LogoMark } from "@/components/Logo";
 import { ContractTypeSelector } from "@/components/ContractTypeSelector";
 import { ContractUpload } from "@/components/ContractUpload";
 import { parseFile, parsePastedText } from "@/lib/parseContract";
@@ -62,7 +62,6 @@ export default function HomePage() {
   async function handleAnalyze() {
     if (!canAnalyze || isLoading) return;
 
-    // Require sign-in before running an analysis.
     if (status !== "authenticated") {
       router.push(`/login?callbackUrl=${encodeURIComponent("/#analyze")}`);
       return;
@@ -88,8 +87,6 @@ export default function HomePage() {
         body: JSON.stringify({ contract_text: text, contract_type: contractType }),
       });
 
-      // The server may return a non-JSON error page (e.g. a platform timeout),
-      // so read as text and parse defensively to avoid cryptic JSON errors.
       const rawBody = await response.text();
       let data: (AnalysisResult & { error?: string }) | null = null;
       try {
@@ -110,22 +107,18 @@ export default function HomePage() {
       sessionStorage.setItem("redflag:result", JSON.stringify(data));
       router.push("/results");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong. Please try again.",
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setIsLoading(false);
       clearInterval(interval);
     }
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-950">
       <Navbar />
-
       <main>
         <Hero />
         <Logos />
-
         <Analyzer
           contractText={contractText}
           contractType={contractType}
@@ -138,7 +131,6 @@ export default function HomePage() {
           onFileChange={setFile}
           onAnalyze={handleAnalyze}
         />
-
         <TrustStats />
         <Features />
         <Testimonials />
@@ -146,9 +138,7 @@ export default function HomePage() {
         <Faq />
         <FinalCta />
       </main>
-
       <Footer />
-
       <AnimatePresence>{isLoading && <LoadingOverlay message={loadingMsg} />}</AnimatePresence>
     </div>
   );
@@ -174,16 +164,12 @@ function Navbar() {
     { href: "#how", label: "How it works" },
     { href: "#faq", label: "FAQ" },
   ];
+
   return (
-    <header className="sticky top-0 z-40 border-b border-navy-100 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-950/70 backdrop-blur-xl">
       <div className="section flex h-16 items-center justify-between">
-        <a href="#top" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-glow">
-            <Flag size={18} className="text-white" fill="white" />
-          </span>
-          <span className="text-lg font-bold tracking-tight text-navy-900">
-            Red<span className="text-brand-500">Flag</span>
-          </span>
+        <a href="#top">
+          <Logo size={30} />
         </a>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -191,7 +177,7 @@ function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3.5 py-2 text-sm font-medium text-navy-600 transition-colors hover:text-navy-900"
+              className="rounded-lg px-3.5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
             >
               {l.label}
             </a>
@@ -201,18 +187,18 @@ function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {authed ? (
             <div className="flex items-center gap-2.5">
-              <span className="flex items-center gap-2 rounded-full border border-navy-100 bg-white py-1 pl-1 pr-3 shadow-soft">
+              <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-3">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-xs font-bold text-white">
                   {initials}
                 </span>
-                <span className="max-w-[140px] truncate text-sm font-medium text-navy-700">
+                <span className="max-w-[140px] truncate text-sm font-medium text-zinc-200">
                   {displayName}
                 </span>
               </span>
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-navy-400 transition-colors hover:bg-navy-50 hover:text-navy-700"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
                 aria-label="Sign out"
                 title="Sign out"
               >
@@ -224,7 +210,7 @@ function Navbar() {
               <Link href="/login" className="btn-ghost">
                 Sign in
               </Link>
-              <a href="#analyze" className="btn-dark">
+              <a href="#analyze" className="btn-primary">
                 Analyze a contract
                 <ArrowRight size={16} />
               </a>
@@ -235,7 +221,7 @@ function Navbar() {
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-navy-700 md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-300 md:hidden"
           aria-label="Toggle menu"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
@@ -248,7 +234,7 @@ function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-navy-100 bg-white md:hidden"
+            className="overflow-hidden border-t border-white/10 bg-ink-950 md:hidden"
           >
             <div className="section flex flex-col gap-1 py-3">
               {links.map((l) => (
@@ -256,18 +242,18 @@ function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-navy-700 hover:bg-navy-50"
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/5"
                 >
                   {l.label}
                 </a>
               ))}
               {authed ? (
                 <>
-                  <div className="mt-1 flex items-center gap-2.5 rounded-lg bg-navy-50 px-3 py-2.5">
+                  <div className="mt-1 flex items-center gap-2.5 rounded-lg bg-white/5 px-3 py-2.5">
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-xs font-bold text-white">
                       {initials}
                     </span>
-                    <span className="truncate text-sm font-medium text-navy-700">
+                    <span className="truncate text-sm font-medium text-zinc-200">
                       {displayName}
                     </span>
                   </div>
@@ -292,7 +278,7 @@ function Navbar() {
                   >
                     Sign in
                   </Link>
-                  <a href="#analyze" onClick={() => setOpen(false)} className="btn-dark w-full">
+                  <a href="#analyze" onClick={() => setOpen(false)} className="btn-primary w-full">
                     Analyze a contract
                   </a>
                 </>
@@ -312,21 +298,20 @@ function Navbar() {
 function Hero() {
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* animated aurora + grid */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="aurora animate-aurora absolute inset-0" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.5] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]" />
-        <div className="absolute left-[8%] top-[18%] h-3 w-3 animate-float rounded-full bg-brand-400/60" />
-        <div className="absolute right-[12%] top-[30%] h-2.5 w-2.5 animate-float-slow rounded-full bg-sky-400/60" />
-        <div className="absolute left-[20%] bottom-[14%] h-2 w-2 animate-float rounded-full bg-amber-400/60" />
+        <div className="aurora animate-aurora absolute inset-0 opacity-80" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] [mask-image:radial-gradient(ellipse_70%_55%_at_50%_0%,black,transparent)]" />
+        <div className="absolute inset-x-0 top-0 h-[600px] spotlight" />
+        <div className="absolute left-[8%] top-[22%] h-2.5 w-2.5 animate-float rounded-full bg-brand-400/70" />
+        <div className="absolute right-[12%] top-[32%] h-2 w-2 animate-float-slow rounded-full bg-sky-400/60" />
+        <div className="absolute left-[22%] bottom-[16%] h-1.5 w-1.5 animate-float rounded-full bg-amber-400/60" />
       </div>
 
-      <div className="section grid items-center gap-12 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-        {/* Copy */}
+      <div className="section grid items-center gap-12 pb-20 pt-16 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="text-center lg:text-left"
         >
           <span className="eyebrow">
@@ -337,16 +322,18 @@ function Hero() {
             AI Contract Risk Review
           </span>
 
-          <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.06] tracking-tight text-navy-900 sm:text-5xl lg:text-6xl">
-            Spot the <span className="text-gradient">red flags</span> before you sign
+          <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Read <span className="text-gradient">between</span>
+            <br className="hidden sm:block" /> the lines.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-xl text-balance text-lg leading-relaxed text-navy-500 lg:mx-0">
-            Upload any contract and our AI surfaces risky clauses, ranks them by severity,
-            and explains each one in plain English — with an instant, downloadable report.
+          <p className="mx-auto mt-6 max-w-xl text-balance text-lg leading-relaxed text-zinc-400 lg:mx-0">
+            RedFlag reviews any contract in seconds — surfacing risky clauses, ranking them by
+            severity, and explaining each in plain English. Know exactly what you&apos;re
+            signing.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
             <a href="#analyze" className="btn-primary group px-7 py-3.5 text-base">
               <Wand2 size={18} />
               Analyze a contract
@@ -360,29 +347,27 @@ function Hero() {
             </a>
           </div>
 
-          {/* ratings */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <RatingBadge platform="G2" score="4.9" />
             <RatingBadge platform="Capterra" score="4.8" />
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-navy-500 lg:justify-start">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-zinc-500 lg:justify-start">
             <span className="inline-flex items-center gap-1.5">
-              <Lock size={15} className="text-brand-500" /> Nothing stored
+              <Lock size={15} className="text-brand-400" /> Nothing stored
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock size={15} className="text-brand-500" /> Results in seconds
+              <Clock size={15} className="text-brand-400" /> Results in seconds
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <FileCheck2 size={15} className="text-brand-500" /> PDF reports
+              <FileCheck2 size={15} className="text-brand-400" /> PDF reports
             </span>
           </div>
         </motion.div>
 
-        {/* Live product preview */}
         <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          initial={{ opacity: 0, y: 26, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <HeroPreview />
         </motion.div>
@@ -391,34 +376,42 @@ function Hero() {
   );
 }
 
-/**
- * A self-running, looping mock of RedFlag analyzing a contract — flags pop in
- * sequentially and the risk score climbs, conveying the product in motion.
- */
+function RatingBadge({ platform, score }: { platform: string; score: string }) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5">
+      <span className="flex">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+        ))}
+      </span>
+      <span className="text-xs font-semibold text-zinc-200">{score}</span>
+      <span className="text-xs text-zinc-500">on {platform}</span>
+    </div>
+  );
+}
+
+/** Self-running, looping mock of RedFlag analyzing a contract. */
 function HeroPreview() {
   const FLAGS = [
     {
-      sev: "high" as const,
       text: "Landlord may enter the premises at any time without notice.",
       action: "Negotiate",
       dot: "bg-red-500",
-      chip: "bg-red-50 text-red-700 border-red-200",
-      bar: "bg-red-400",
+      chip: "bg-red-500/15 text-red-300 border-red-500/30",
+      bar: "bg-red-500",
     },
     {
-      sev: "high" as const,
       text: "Tenant waives all rights to a security-deposit refund.",
       action: "Remove",
       dot: "bg-red-500",
-      chip: "bg-red-50 text-red-700 border-red-200",
-      bar: "bg-red-400",
+      chip: "bg-red-500/15 text-red-300 border-red-500/30",
+      bar: "bg-red-500",
     },
     {
-      sev: "medium" as const,
       text: "Lease auto-renews for 5 years with a $5,000 penalty.",
       action: "Clarify",
       dot: "bg-amber-400",
-      chip: "bg-blue-50 text-blue-700 border-blue-200",
+      chip: "bg-sky-500/15 text-sky-300 border-sky-500/30",
       bar: "bg-amber-400",
     },
   ];
@@ -426,9 +419,7 @@ function HeroPreview() {
 
   const [visible, setVisible] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => {
-      setVisible((v) => (v >= FLAGS.length ? 0 : v + 1));
-    }, 1500);
+    const id = setInterval(() => setVisible((v) => (v >= FLAGS.length ? 0 : v + 1)), 1500);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -437,32 +428,32 @@ function HeroPreview() {
   const radius = 26;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const scoreColor = score > 70 ? "#ef4444" : score >= 40 ? "#eab308" : "#22c55e";
+  const scoreColor = score > 70 ? "#f43f5e" : score >= 40 ? "#eab308" : "#22c55e";
 
   return (
     <div className="relative mx-auto max-w-md">
-      {/* floating accent chips */}
-      <div className="absolute -left-4 top-10 z-10 hidden animate-float rounded-xl border border-navy-100 bg-white px-3 py-2 shadow-elevated sm:block">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-navy-400">
+      <div className="absolute -inset-6 -z-10 spotlight blur-2xl" />
+
+      <div className="absolute -left-4 top-10 z-10 hidden animate-float rounded-xl border border-white/10 bg-ink-800/90 px-3 py-2 shadow-elevated backdrop-blur sm:block">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
           Flags found
         </p>
-        <p className="text-lg font-bold text-navy-900">{visible}</p>
+        <p className="text-lg font-bold text-white">{visible}</p>
       </div>
-      <div className="absolute -right-3 bottom-16 z-10 hidden animate-float-slow items-center gap-2 rounded-xl border border-navy-100 bg-white px-3 py-2 shadow-elevated sm:flex">
-        <ShieldCheck size={16} className="text-green-500" />
-        <span className="text-xs font-semibold text-navy-700">Privacy-first</span>
+      <div className="absolute -right-3 bottom-16 z-10 hidden animate-float-slow items-center gap-2 rounded-xl border border-white/10 bg-ink-800/90 px-3 py-2 shadow-elevated backdrop-blur sm:flex">
+        <ShieldCheck size={16} className="text-green-400" />
+        <span className="text-xs font-semibold text-zinc-200">Privacy-first</span>
       </div>
 
-      {/* main card */}
-      <div className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-elevated">
-        <div className="flex items-center justify-between border-b border-navy-100 bg-navy-50/60 px-5 py-3.5">
+      <div className="overflow-hidden rounded-3xl border border-white/10 bg-ink-900/80 shadow-elevated backdrop-blur-xl">
+        <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-5 py-3.5">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-brand-600 shadow-soft">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-brand-400">
               <FileCheck2 size={15} />
             </span>
-            <span className="text-sm font-semibold text-navy-800">Lease_Agreement.pdf</span>
+            <span className="text-sm font-semibold text-zinc-200">Lease_Agreement.pdf</span>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-navy-500 shadow-soft">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-zinc-400">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400/70" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
@@ -472,11 +463,10 @@ function HeroPreview() {
         </div>
 
         <div className="p-5">
-          {/* score + summary */}
-          <div className="mb-4 flex items-center gap-4 rounded-2xl border border-navy-100 bg-navy-50/40 p-4">
+          <div className="mb-4 flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <div className="relative h-16 w-16 shrink-0">
               <svg className="h-full w-full -rotate-90" viewBox="0 0 64 64">
-                <circle cx="32" cy="32" r={radius} fill="none" strokeWidth="7" className="stroke-navy-100" />
+                <circle cx="32" cy="32" r={radius} fill="none" strokeWidth="7" className="stroke-white/10" />
                 <circle
                   cx="32"
                   cy="32"
@@ -489,15 +479,15 @@ function HeroPreview() {
                   strokeDashoffset={offset}
                 />
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-navy-900">
+              <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-white">
                 {score}
               </span>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-navy-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 Overall risk
               </p>
-              <p className="text-sm font-medium text-navy-700">
+              <p className="text-sm font-medium text-zinc-300">
                 {score > 70
                   ? "High risk — review before signing"
                   : score >= 40
@@ -507,10 +497,9 @@ function HeroPreview() {
             </div>
           </div>
 
-          {/* flags */}
           <div className="space-y-2.5">
             <AnimatePresence mode="popLayout">
-              {FLAGS.slice(0, visible).map((f, i) => (
+              {FLAGS.slice(0, visible).map((f) => (
                 <motion.div
                   key={f.text}
                   layout
@@ -518,17 +507,15 @@ function HeroPreview() {
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative overflow-hidden rounded-xl border border-navy-100 bg-white p-3 pl-4 shadow-soft"
+                  className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] p-3 pl-4"
                 >
                   <span className={`absolute inset-y-0 left-0 w-1 ${f.bar}`} />
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2">
                       <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${f.dot}`} />
-                      <p className="text-xs leading-relaxed text-navy-700">{f.text}</p>
+                      <p className="text-xs leading-relaxed text-zinc-300">{f.text}</p>
                     </div>
-                    <span
-                      className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${f.chip}`}
-                    >
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${f.chip}`}>
                       {f.action}
                     </span>
                   </div>
@@ -536,12 +523,11 @@ function HeroPreview() {
               ))}
             </AnimatePresence>
 
-            {/* skeleton placeholder for the next incoming flag */}
             {visible < FLAGS.length && (
-              <div className="shimmer rounded-xl border border-dashed border-navy-100 bg-navy-50/40 p-3 pl-4">
+              <div className="shimmer rounded-xl border border-dashed border-white/10 bg-white/[0.02] p-3 pl-4">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-navy-200" />
-                  <span className="h-2.5 w-2/3 rounded bg-navy-100" />
+                  <span className="h-2 w-2 rounded-full bg-white/15" />
+                  <span className="h-2.5 w-2/3 rounded bg-white/10" />
                 </div>
               </div>
             )}
@@ -572,32 +558,17 @@ function useEase(target: number, ms = 650): number {
   return value;
 }
 
-function RatingBadge({ platform, score }: { platform: string; score: string }) {
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-navy-100 bg-white px-3.5 py-1.5 shadow-soft">
-      <span className="flex">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
-        ))}
-      </span>
-      <span className="text-xs font-semibold text-navy-700">{score}</span>
-      <span className="text-xs text-navy-400">on {platform}</span>
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
-/* Logo strip                                                          */
+/* Logo marquee                                                        */
 /* ------------------------------------------------------------------ */
 
 function Logos() {
   const names = ["Northwind", "Lumen", "Vertex", "Quantix", "Hadley & Co", "Brightway", "Meridian", "Cobalt"];
-  // Duplicated so the marquee scrolls seamlessly.
   const loop = [...names, ...names];
   return (
-    <section className="border-y border-navy-100 bg-white">
+    <section className="border-y border-white/10 bg-white/[0.02]">
       <div className="section py-8">
-        <p className="text-center text-xs font-semibold uppercase tracking-wider text-navy-400">
+        <p className="text-center text-xs font-semibold uppercase tracking-wider text-zinc-600">
           Trusted by individuals and teams everywhere
         </p>
         <div className="marquee-mask mt-6 overflow-hidden">
@@ -605,7 +576,7 @@ function Logos() {
             {loop.map((n, i) => (
               <span
                 key={`${n}-${i}`}
-                className="whitespace-nowrap text-lg font-bold tracking-tight text-navy-300 transition-colors hover:text-navy-500"
+                className="whitespace-nowrap text-lg font-bold tracking-tight text-zinc-600 transition-colors hover:text-zinc-300"
               >
                 {n}
               </span>
@@ -618,84 +589,7 @@ function Logos() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Testimonials                                                        */
-/* ------------------------------------------------------------------ */
-
-const TESTIMONIALS = [
-  {
-    quote:
-      "RedFlag caught an auto-renewal clause with a hefty penalty that I'd completely glossed over. It paid for itself before I even signed.",
-    name: "Sarah Chen",
-    role: "Freelance Product Designer",
-    initials: "SC",
-    tint: "bg-brand-100 text-brand-700",
-  },
-  {
-    quote:
-      "We run every vendor agreement through RedFlag before it reaches legal. The severity ranking tells us exactly where to focus.",
-    name: "Marcus Reyes",
-    role: "Operations Lead, Lumen",
-    initials: "MR",
-    tint: "bg-sky-100 text-sky-700",
-  },
-  {
-    quote:
-      "As a first-time renter, the plain-English explanations were a lifesaver. It flagged a no-notice entry clause I would have signed.",
-    name: "Priya Natarajan",
-    role: "First-time Renter",
-    initials: "PN",
-    tint: "bg-emerald-100 text-emerald-700",
-  },
-];
-
-function Testimonials() {
-  return (
-    <section className="py-20 sm:py-24">
-      <div className="section">
-        <SectionHeading
-          eyebrow="Testimonials"
-          title="Loved by people who read the fine print"
-          subtitle="From first-time renters to operations teams, RedFlag turns dense legalese into clear, confident decisions."
-        />
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.figure
-              key={t.name}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="flex flex-col rounded-2xl border border-navy-100 bg-white p-7 shadow-soft"
-            >
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, s) => (
-                  <Star key={s} size={16} className="fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-navy-700">
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 flex items-center gap-3 border-t border-navy-100 pt-5">
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${t.tint}`}
-                >
-                  {t.initials}
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-navy-900">{t.name}</span>
-                  <span className="block text-xs text-navy-400">{t.role}</span>
-                </span>
-              </figcaption>
-            </motion.figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Analyzer (the functional tool)                                      */
+/* Analyzer                                                            */
 /* ------------------------------------------------------------------ */
 
 interface AnalyzerProps {
@@ -724,34 +618,29 @@ function Analyzer({
   onAnalyze,
 }: AnalyzerProps) {
   return (
-    <section id="analyze" className="scroll-mt-20 pb-20">
+    <section id="analyze" className="scroll-mt-20 py-20 sm:py-24">
       <div className="section">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto max-w-3xl overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-elevated"
+          className="mx-auto max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] shadow-elevated backdrop-blur-xl"
         >
-          <div className="flex items-center gap-3 border-b border-navy-100 bg-navy-50/50 px-6 py-4 sm:px-8">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-brand-600 shadow-soft">
+          <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.03] px-6 py-4 sm:px-8">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-brand-400">
               <ScanSearch size={18} />
             </span>
             <div>
-              <h2 className="text-sm font-bold text-navy-900">Review a contract</h2>
-              <p className="text-xs text-navy-400">
-                Pick a type, add your text, and analyze.
-              </p>
+              <h2 className="text-sm font-bold text-white">Review a contract</h2>
+              <p className="text-xs text-zinc-500">Pick a type, add your text, and analyze.</p>
             </div>
           </div>
 
           <div className="space-y-6 p-6 sm:p-8">
             <ContractTypeSelector value={contractType} onChange={onTypeChange} />
-
             <div>
-              <label className="mb-2 block text-sm font-semibold text-navy-700">
-                Your contract
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-zinc-200">Your contract</label>
               <ContractUpload
                 text={contractText}
                 file={file}
@@ -764,12 +653,12 @@ function Analyzer({
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4"
+                className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4"
               >
-                <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
+                <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-400" />
                 <div>
-                  <p className="text-sm font-semibold text-red-700">Analysis failed</p>
-                  <p className="text-sm text-red-600">{error}</p>
+                  <p className="text-sm font-semibold text-red-300">Analysis failed</p>
+                  <p className="text-sm text-red-200/80">{error}</p>
                 </div>
               </motion.div>
             )}
@@ -792,7 +681,7 @@ function Analyzer({
             </button>
 
             {!canAnalyze && !isLoading && (
-              <p className="text-center text-xs text-navy-400">
+              <p className="text-center text-xs text-zinc-500">
                 Select a contract type and add your contract to begin.
               </p>
             )}
@@ -804,7 +693,7 @@ function Analyzer({
 }
 
 /* ------------------------------------------------------------------ */
-/* Trust stats strip                                                   */
+/* Trust stats                                                         */
 /* ------------------------------------------------------------------ */
 
 function TrustStats() {
@@ -815,7 +704,7 @@ function TrustStats() {
     { to: 30, prefix: "<", suffix: "s", label: "Average review time" },
   ];
   return (
-    <section className="border-y border-navy-100 bg-navy-50/40">
+    <section className="border-y border-white/10 bg-white/[0.02]">
       <div className="section grid grid-cols-2 gap-6 py-12 md:grid-cols-4">
         {stats.map((s, i) => (
           <CountStat key={s.label} {...s} delay={i * 0.05} />
@@ -849,12 +738,12 @@ function CountStat({
       onViewportEnter={() => setActive(true)}
       className="text-center"
     >
-      <p className="text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl">
+      <p className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
         {prefix}
         {value.toLocaleString()}
         {suffix}
       </p>
-      <p className="mt-1 text-sm text-navy-500">{label}</p>
+      <p className="mt-1 text-sm text-zinc-500">{label}</p>
     </motion.div>
   );
 }
@@ -866,7 +755,7 @@ function CountStat({
 function Features() {
   const features = [
     {
-      icon: <Flag size={20} />,
+      icon: <LogoMark size={20} />,
       title: "Clause-level red flags",
       desc: "Every risky, unusual, or one-sided clause is identified and quoted directly from your contract.",
     },
@@ -897,7 +786,7 @@ function Features() {
     },
   ];
   return (
-    <section id="features" className="scroll-mt-20 py-20 sm:py-24">
+    <section id="features" className="scroll-mt-20 py-20 sm:py-28">
       <div className="section">
         <SectionHeading
           eyebrow="Features"
@@ -912,14 +801,89 @@ function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3) }}
-              className="group rounded-2xl border border-navy-100 bg-white p-6 shadow-soft transition-shadow duration-300 hover:shadow-card"
+              className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
             >
-              <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-100">
+              <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/15 text-brand-400 transition-colors group-hover:bg-brand-500/25">
                 {f.icon}
               </span>
-              <h3 className="text-base font-semibold text-navy-900">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-navy-500">{f.desc}</p>
+              <h3 className="text-base font-semibold text-white">{f.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-400">{f.desc}</p>
             </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Testimonials                                                        */
+/* ------------------------------------------------------------------ */
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "RedFlag caught an auto-renewal clause with a hefty penalty that I'd completely glossed over. It paid for itself before I even signed.",
+    name: "Sarah Chen",
+    role: "Freelance Product Designer",
+    initials: "SC",
+    tint: "bg-brand-500/20 text-brand-300",
+  },
+  {
+    quote:
+      "We run every vendor agreement through RedFlag before it reaches legal. The severity ranking tells us exactly where to focus.",
+    name: "Marcus Reyes",
+    role: "Operations Lead, Lumen",
+    initials: "MR",
+    tint: "bg-sky-500/20 text-sky-300",
+  },
+  {
+    quote:
+      "As a first-time renter, the plain-English explanations were a lifesaver. It flagged a no-notice entry clause I would have signed.",
+    name: "Priya Natarajan",
+    role: "First-time Renter",
+    initials: "PN",
+    tint: "bg-emerald-500/20 text-emerald-300",
+  },
+];
+
+function Testimonials() {
+  return (
+    <section className="border-t border-white/10 bg-white/[0.02] py-20 sm:py-28">
+      <div className="section">
+        <SectionHeading
+          eyebrow="Testimonials"
+          title="Loved by people who read the fine print"
+          subtitle="From first-time renters to operations teams, RedFlag turns dense legalese into clear, confident decisions."
+        />
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {TESTIMONIALS.map((t, i) => (
+            <motion.figure
+              key={t.name}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-7"
+            >
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, s) => (
+                  <Star key={s} size={16} className="fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-zinc-300">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-3 border-t border-white/10 pt-5">
+                <span className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${t.tint}`}>
+                  {t.initials}
+                </span>
+                <span>
+                  <span className="block text-sm font-semibold text-white">{t.name}</span>
+                  <span className="block text-xs text-zinc-500">{t.role}</span>
+                </span>
+              </figcaption>
+            </motion.figure>
           ))}
         </div>
       </div>
@@ -950,12 +914,12 @@ function HowItWorks() {
     },
   ];
   return (
-    <section id="how" className="scroll-mt-20 border-y border-navy-100 bg-navy-50/40 py-20 sm:py-24">
+    <section id="how" className="scroll-mt-20 py-20 sm:py-28">
       <div className="section">
         <SectionHeading
           eyebrow="How it works"
           title="From contract to clarity in three steps"
-          subtitle="No setup, no account, no legalese — just answers."
+          subtitle="No setup, no account hoops, no legalese — just answers."
         />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((s, i) => (
@@ -965,11 +929,11 @@ function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="relative rounded-2xl border border-navy-100 bg-white p-7 shadow-soft"
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-7"
             >
-              <span className="text-4xl font-bold text-brand-200">{s.n}</span>
-              <h3 className="mt-3 text-lg font-semibold text-navy-900">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-navy-500">{s.desc}</p>
+              <span className="font-display text-4xl font-bold text-brand-500/40">{s.n}</span>
+              <h3 className="mt-3 text-lg font-semibold text-white">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-400">{s.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -1014,10 +978,10 @@ const FAQS = [
 function Faq() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   return (
-    <section id="faq" className="scroll-mt-20 py-20 sm:py-24">
+    <section id="faq" className="scroll-mt-20 border-t border-white/10 bg-white/[0.02] py-20 sm:py-28">
       <div className="section max-w-3xl">
         <SectionHeading eyebrow="FAQ" title="Frequently asked questions" />
-        <div className="mt-10 divide-y divide-navy-100 overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-soft">
+        <div className="mt-10 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
           {FAQS.map((item, i) => {
             const open = openIdx === i;
             return (
@@ -1025,12 +989,10 @@ function Faq() {
                 <button
                   type="button"
                   onClick={() => setOpenIdx(open ? null : i)}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-navy-50/50"
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-white/[0.03]"
                 >
-                  <span className="text-sm font-semibold text-navy-900 sm:text-base">
-                    {item.q}
-                  </span>
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-navy-50 text-navy-500">
+                  <span className="text-sm font-semibold text-white sm:text-base">{item.q}</span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/5 text-zinc-400">
                     {open ? <Minus size={15} /> : <Plus size={15} />}
                   </span>
                 </button>
@@ -1043,9 +1005,7 @@ function Faq() {
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-5 text-sm leading-relaxed text-navy-500">
-                        {item.a}
-                      </p>
+                      <p className="px-6 pb-5 text-sm leading-relaxed text-zinc-400">{item.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -1064,37 +1024,34 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section className="pb-24">
+    <section className="py-24">
       <div className="section">
-        <div className="relative overflow-hidden rounded-3xl bg-navy-950 px-6 py-16 text-center shadow-elevated sm:px-12">
-          <div className="pointer-events-none absolute inset-0 bg-grid-pattern [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-          <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[600px] -translate-x-1/2 bg-radial-fade" />
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-ink-800 to-ink-900 px-6 py-16 text-center shadow-elevated sm:px-12">
+          <div className="pointer-events-none absolute inset-0 spotlight" />
+          <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
           <div className="relative">
             <h2 className="mx-auto max-w-2xl text-balance text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Don&apos;t sign blind. Find the red flags first.
+              Don&apos;t sign blind. Read between the lines.
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-balance text-navy-300">
+            <p className="mx-auto mt-4 max-w-xl text-balance text-zinc-400">
               Get a clear, severity-ranked breakdown of any contract in seconds — free.
             </p>
             <div className="mt-8 flex justify-center">
               <a href="#analyze" className="btn-primary group px-8 py-4 text-base">
                 <Wand2 size={18} />
                 Analyze a contract now
-                <ArrowRight
-                  size={18}
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                />
+                <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
               </a>
             </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-navy-300">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-zinc-500">
               <span className="inline-flex items-center gap-1.5">
-                <Lock size={13} className="text-brand-300" /> Encrypted in transit
+                <Lock size={13} className="text-brand-400" /> Encrypted in transit
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck size={13} className="text-brand-300" /> No data retention
+                <ShieldCheck size={13} className="text-brand-400" /> No data retention
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <FileCheck2 size={13} className="text-brand-300" /> GDPR-aligned
+                <FileCheck2 size={13} className="text-brand-400" /> GDPR-aligned
               </span>
             </div>
           </div>
@@ -1105,7 +1062,7 @@ function FinalCta() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Shared bits                                                         */
+/* Shared                                                              */
 /* ------------------------------------------------------------------ */
 
 function SectionHeading({
@@ -1119,15 +1076,11 @@ function SectionHeading({
 }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <span className="text-sm font-bold uppercase tracking-wider text-brand-500">
-        {eyebrow}
-      </span>
-      <h2 className="mt-3 text-balance text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl">
+      <span className="text-sm font-bold uppercase tracking-wider text-brand-400">{eyebrow}</span>
+      <h2 className="mt-3 text-balance text-3xl font-bold tracking-tight text-white sm:text-4xl">
         {title}
       </h2>
-      {subtitle && (
-        <p className="mt-4 text-balance text-lg leading-relaxed text-navy-500">{subtitle}</p>
-      )}
+      {subtitle && <p className="mt-4 text-balance text-lg leading-relaxed text-zinc-400">{subtitle}</p>}
     </div>
   );
 }
@@ -1138,20 +1091,20 @@ function LoadingOverlay({ message }: { message: string }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 backdrop-blur-md"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="mx-4 flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-white/60 bg-white p-8 text-center shadow-elevated"
+        className="mx-4 flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-white/10 bg-ink-900 p-8 text-center shadow-elevated"
       >
         <span className="relative flex h-14 w-14 items-center justify-center">
-          <span className="absolute inset-0 animate-ping rounded-full bg-brand-400/30" />
-          <ScanSearch size={32} className="text-brand-500" />
+          <span className="absolute inset-0 animate-ping rounded-full bg-brand-500/30" />
+          <ScanSearch size={32} className="text-brand-400" />
         </span>
         <div>
-          <p className="text-base font-semibold text-navy-900">{message}</p>
-          <p className="mt-1 text-sm text-navy-400">This usually takes a few seconds.</p>
+          <p className="text-base font-semibold text-white">{message}</p>
+          <p className="mt-1 text-sm text-zinc-500">This usually takes a few seconds.</p>
         </div>
       </motion.div>
     </motion.div>
@@ -1160,42 +1113,38 @@ function LoadingOverlay({ message }: { message: string }) {
 
 function Footer() {
   return (
-    <footer className="border-t border-navy-100 bg-navy-50/40">
+    <footer className="border-t border-white/10 bg-white/[0.02]">
       <div className="section py-12">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row md:items-start">
           <div className="max-w-xs text-center md:text-left">
-            <div className="flex items-center justify-center gap-2.5 md:justify-start">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600">
-                <Flag size={15} className="text-white" fill="white" />
-              </span>
-              <span className="text-base font-bold tracking-tight text-navy-900">
-                Red<span className="text-brand-500">Flag</span>
-              </span>
+            <div className="flex justify-center md:justify-start">
+              <Logo size={28} />
             </div>
-            <p className="mt-3 text-sm text-navy-500">
+            <p className="mt-3 text-sm font-medium text-brand-400">Read between the lines.</p>
+            <p className="mt-2 text-sm text-zinc-500">
               AI contract risk review that explains the fine print before you sign.
             </p>
           </div>
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <a href="#features" className="text-sm font-medium text-navy-600 hover:text-navy-900">
+            <a href="#features" className="text-sm font-medium text-zinc-400 hover:text-white">
               Features
             </a>
-            <a href="#how" className="text-sm font-medium text-navy-600 hover:text-navy-900">
+            <a href="#how" className="text-sm font-medium text-zinc-400 hover:text-white">
               How it works
             </a>
-            <a href="#faq" className="text-sm font-medium text-navy-600 hover:text-navy-900">
+            <a href="#faq" className="text-sm font-medium text-zinc-400 hover:text-white">
               FAQ
             </a>
-            <a href="#analyze" className="text-sm font-medium text-navy-600 hover:text-navy-900">
+            <a href="#analyze" className="text-sm font-medium text-zinc-400 hover:text-white">
               Analyze
             </a>
           </nav>
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-navy-100 pt-6 text-center sm:flex-row sm:text-left">
-          <p className="text-xs text-navy-400">
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-center sm:flex-row sm:text-left">
+          <p className="text-xs text-zinc-600">
             © {new Date().getFullYear()} RedFlag · AI-generated guidance, not legal advice.
           </p>
-          <p className="text-xs text-navy-400">Built with Next.js &amp; NVIDIA NIM</p>
+          <p className="text-xs text-zinc-600">Built with Next.js &amp; NVIDIA NIM</p>
         </div>
       </div>
     </footer>

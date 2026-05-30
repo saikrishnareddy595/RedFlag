@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -9,10 +9,17 @@ const inter = Inter({
   display: "swap",
 });
 
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "RedFlag — AI Contract Risk Scanner",
+  title: "RedFlag — Read between the lines",
   description:
-    "Paste or upload any contract and let AI flag risky clauses, rank them by severity, and explain each in plain English. Get an instant, downloadable risk report.",
+    "RedFlag reviews any contract with AI — flagging risky clauses, ranking them by severity, and explaining each in plain English. Read between the lines before you sign.",
   keywords: [
     "contract analysis",
     "AI legal",
@@ -32,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a1929",
+  themeColor: "#08090c",
   width: "device-width",
   initialScale: 1,
 };
@@ -43,8 +50,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen antialiased">
+    <html lang="en" className={`${inter.variable} ${display.variable}`}>
+      <body className="min-h-screen bg-ink-950 antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

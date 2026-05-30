@@ -13,27 +13,27 @@ function getRiskBand(score: number) {
   if (score > 70) {
     return {
       label: "High Risk",
-      stroke: "#ef4444",
-      text: "text-red-600",
+      stroke: "#f43f5e",
+      text: "text-red-400",
       ring: "text-red-500",
-      soft: "bg-red-50",
+      soft: "bg-red-500/15 text-red-300",
     };
   }
   if (score >= 40) {
     return {
       label: "Moderate Risk",
       stroke: "#eab308",
-      text: "text-yellow-600",
+      text: "text-yellow-400",
       ring: "text-yellow-500",
-      soft: "bg-yellow-50",
+      soft: "bg-yellow-500/15 text-yellow-300",
     };
   }
   return {
     label: "Low Risk",
     stroke: "#22c55e",
-    text: "text-green-600",
+    text: "text-green-400",
     ring: "text-green-500",
-    soft: "bg-green-50",
+    soft: "bg-green-500/15 text-green-300",
   };
 }
 
@@ -75,7 +75,7 @@ export function RiskSummary({ result }: RiskSummaryProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-elevated"
+      className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] shadow-elevated"
     >
       <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[auto_1fr] md:gap-10">
         {/* Score gauge */}
@@ -89,7 +89,7 @@ export function RiskSummary({ result }: RiskSummaryProps) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="12"
-                className="text-navy-100"
+                className="text-white/10"
               />
               <motion.circle
                 cx="80"
@@ -107,7 +107,7 @@ export function RiskSummary({ result }: RiskSummaryProps) {
               <span className={`text-5xl font-bold tracking-tight ${band.text}`}>
                 {animatedScore}
               </span>
-              <span className="text-xs font-medium text-navy-400">/ 100</span>
+              <span className="text-xs font-medium text-zinc-500">/ 100</span>
             </div>
           </div>
           <span
@@ -119,10 +119,10 @@ export function RiskSummary({ result }: RiskSummaryProps) {
 
         {/* Summary + counts */}
         <div className="flex flex-col justify-center">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-navy-400">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
             Overall assessment
           </h2>
-          <p className="mt-2 text-balance text-lg leading-relaxed text-navy-800">
+          <p className="mt-2 text-balance text-lg leading-relaxed text-zinc-200">
             {result.overall_summary || "No summary was provided."}
           </p>
 
@@ -131,30 +131,28 @@ export function RiskSummary({ result }: RiskSummaryProps) {
               label="High"
               count={counts.high}
               icon={<AlertOctagon size={16} />}
-              className="bg-red-50 text-red-600"
+              className="bg-red-500/15 text-red-300"
             />
             <CountCard
               label="Medium"
               count={counts.medium}
               icon={<AlertTriangle size={16} />}
-              className="bg-yellow-50 text-yellow-600"
+              className="bg-yellow-500/15 text-yellow-300"
             />
             <CountCard
               label="Low"
               count={counts.low}
               icon={<ShieldCheck size={16} />}
-              className="bg-green-50 text-green-600"
+              className="bg-green-500/15 text-green-300"
             />
           </div>
         </div>
       </div>
 
       {/* Disclaimer */}
-      <div className="flex items-start gap-3 border-t border-navy-100 bg-navy-50/60 px-6 py-4 sm:px-8">
-        <Info size={16} className="mt-0.5 shrink-0 text-navy-400" />
-        <p className="text-xs leading-relaxed text-navy-500">
-          {result.disclaimer}
-        </p>
+      <div className="flex items-start gap-3 border-t border-white/10 bg-white/[0.02] px-6 py-4 sm:px-8">
+        <Info size={16} className="mt-0.5 shrink-0 text-zinc-500" />
+        <p className="text-xs leading-relaxed text-zinc-500">{result.disclaimer}</p>
       </div>
     </motion.section>
   );
@@ -169,14 +167,14 @@ interface CountCardProps {
 
 function CountCard({ label, count, icon, className }: CountCardProps) {
   return (
-    <div className="rounded-xl border border-navy-100 bg-white p-3 text-center shadow-soft">
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
       <span
         className={`mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-lg ${className}`}
       >
         {icon}
       </span>
-      <p className="text-2xl font-bold text-navy-900">{count}</p>
-      <p className="text-xs font-medium text-navy-400">{label}</p>
+      <p className="text-2xl font-bold text-white">{count}</p>
+      <p className="text-xs font-medium text-zinc-500">{label}</p>
     </div>
   );
 }

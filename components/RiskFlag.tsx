@@ -25,19 +25,19 @@ const SEVERITY_CONFIG: Record<
 > = {
   high: {
     label: "High risk",
-    badge: "bg-red-50 border-red-200 text-red-700",
+    badge: "bg-red-500/15 border-red-500/30 text-red-300",
     accent: "bg-red-500",
     icon: <AlertOctagon size={13} />,
   },
   medium: {
     label: "Medium risk",
-    badge: "bg-yellow-50 border-yellow-200 text-yellow-700",
+    badge: "bg-yellow-500/15 border-yellow-500/30 text-yellow-300",
     accent: "bg-yellow-400",
     icon: <AlertTriangle size={13} />,
   },
   low: {
     label: "Low risk",
-    badge: "bg-green-50 border-green-200 text-green-700",
+    badge: "bg-green-500/15 border-green-500/30 text-green-300",
     accent: "bg-green-500",
     icon: <ShieldCheck size={13} />,
   },
@@ -49,22 +49,22 @@ const SUGGESTION_CONFIG: Record<
 > = {
   negotiate: {
     label: "Negotiate",
-    chip: "bg-amber-50 text-amber-700 border-amber-200",
+    chip: "bg-amber-500/15 text-amber-300 border-amber-500/30",
     icon: <Handshake size={13} />,
   },
   clarify: {
     label: "Clarify",
-    chip: "bg-blue-50 text-blue-700 border-blue-200",
+    chip: "bg-sky-500/15 text-sky-300 border-sky-500/30",
     icon: <HelpCircle size={13} />,
   },
   remove: {
     label: "Remove",
-    chip: "bg-red-50 text-red-700 border-red-200",
+    chip: "bg-red-500/15 text-red-300 border-red-500/30",
     icon: <Trash2 size={13} />,
   },
   accept: {
     label: "Accept",
-    chip: "bg-green-50 text-green-700 border-green-200",
+    chip: "bg-green-500/15 text-green-300 border-green-500/30",
     icon: <ShieldCheck size={13} />,
   },
 };
@@ -81,7 +81,7 @@ export function RiskFlag({ flag, index }: RiskFlagProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4), ease: [0.16, 1, 0.3, 1] }}
-      className="group relative overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-card transition-shadow duration-300 hover:shadow-elevated"
+      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.05]"
     >
       {/* Severity accent rail */}
       <span
@@ -98,7 +98,7 @@ export function RiskFlag({ flag, index }: RiskFlagProps) {
               {severity.icon}
               {severity.label}
             </span>
-            <span className="text-xs font-medium text-navy-300">
+            <span className="text-xs font-medium text-zinc-600">
               Flag #{flag.id}
             </span>
           </div>
@@ -111,14 +111,10 @@ export function RiskFlag({ flag, index }: RiskFlagProps) {
         </div>
 
         {/* Clause text */}
-        <div className="mb-4 rounded-xl border border-navy-100 bg-navy-50/50 p-4">
-          <Quote
-            size={14}
-            className="mb-1.5 text-navy-300"
-            aria-hidden
-          />
+        <div className="mb-4 rounded-xl border border-white/10 bg-black/20 p-4">
+          <Quote size={14} className="mb-1.5 text-zinc-600" aria-hidden />
           <p
-            className={`text-sm italic leading-relaxed text-navy-700 ${
+            className={`text-sm italic leading-relaxed text-zinc-300 ${
               !expanded && isLong ? "line-clamp-3" : ""
             }`}
           >
@@ -128,7 +124,7 @@ export function RiskFlag({ flag, index }: RiskFlagProps) {
             <button
               type="button"
               onClick={() => setExpanded((e) => !e)}
-              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:text-brand-700"
+              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-400 hover:text-brand-300"
             >
               {expanded ? "Show less" : "Show full clause"}
               <ChevronDown
@@ -141,19 +137,17 @@ export function RiskFlag({ flag, index }: RiskFlagProps) {
 
         {/* Explanation */}
         <div className="mb-4">
-          <h4 className="mb-1 text-xs font-bold uppercase tracking-wide text-navy-400">
+          <h4 className="mb-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
             What it means
           </h4>
-          <p className="text-sm leading-relaxed text-navy-700">
-            {flag.explanation}
-          </p>
+          <p className="text-sm leading-relaxed text-zinc-300">{flag.explanation}</p>
         </div>
 
         {/* Reason for suggestion */}
         {flag.reason_for_suggestion && (
-          <div className="rounded-lg bg-navy-50/60 px-3.5 py-2.5">
-            <p className="text-xs leading-relaxed text-navy-500">
-              <span className="font-semibold text-navy-600">
+          <div className="rounded-lg bg-white/[0.03] px-3.5 py-2.5">
+            <p className="text-xs leading-relaxed text-zinc-400">
+              <span className="font-semibold text-zinc-300">
                 Why {suggestion.label.toLowerCase()}:{" "}
               </span>
               {flag.reason_for_suggestion}

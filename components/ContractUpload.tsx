@@ -60,7 +60,7 @@ export function ContractUpload({
   return (
     <div className="w-full">
       {/* Tab switcher */}
-      <div className="mb-4 inline-flex items-center gap-1 rounded-xl border border-navy-200 bg-navy-50/60 p-1">
+      <div className="mb-4 inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 p-1">
         <TabButton
           active={tab === "upload"}
           onClick={() => setTab("upload")}
@@ -89,17 +89,17 @@ export function ContractUpload({
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center justify-between gap-4 rounded-xl border border-navy-200 bg-white p-4 shadow-soft"
+              className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 p-4"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-500/15 text-brand-400">
                   <FileType2 size={20} />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-navy-900">
+                  <p className="truncate text-sm font-semibold text-white">
                     {file.name}
                   </p>
-                  <p className="text-xs text-navy-400">
+                  <p className="text-xs text-zinc-500">
                     {formatBytes(file.size)} · Ready to analyze
                   </p>
                 </div>
@@ -110,7 +110,7 @@ export function ContractUpload({
                   onFileChange(null);
                   if (inputRef.current) inputRef.current.value = "";
                 }}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-navy-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                 aria-label="Remove file"
               >
                 <Trash2 size={17} />
@@ -132,25 +132,25 @@ export function ContractUpload({
               onDrop={handleDrop}
               className={`group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-all duration-200 ${
                 isDragging
-                  ? "border-brand-400 bg-brand-50/60 scale-[1.01]"
-                  : "border-navy-200 bg-navy-50/40 hover:border-brand-300 hover:bg-brand-50/30"
+                  ? "scale-[1.01] border-brand-400 bg-brand-500/10"
+                  : "border-white/15 bg-white/[0.02] hover:border-brand-400/50 hover:bg-brand-500/[0.06]"
               }`}
             >
               <span
                 className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition-colors duration-200 ${
                   isDragging
-                    ? "bg-brand-100 text-brand-600"
-                    : "bg-white text-navy-400 shadow-soft group-hover:text-brand-500"
+                    ? "bg-brand-500/20 text-brand-300"
+                    : "bg-white/5 text-zinc-400 group-hover:text-brand-400"
                 }`}
               >
                 <UploadCloud size={26} />
               </span>
-              <p className="text-sm font-semibold text-navy-800">
+              <p className="text-sm font-semibold text-zinc-200">
                 {isDragging
                   ? "Drop your contract here"
                   : "Drag & drop your contract, or click to browse"}
               </p>
-              <p className="mt-1 text-xs text-navy-400">
+              <p className="mt-1 text-xs text-zinc-500">
                 PDF, DOCX, or TXT · Processed privately, never stored
               </p>
             </div>
@@ -166,9 +166,9 @@ export function ContractUpload({
                 if (file) onFileChange(null);
               }}
               placeholder="Paste your contract text here…&#10;&#10;Example: This Agreement is entered into as of the Effective Date by and between…"
-              className="min-h-[220px] w-full resize-y rounded-xl border border-navy-200 bg-white p-4 text-sm leading-relaxed text-navy-800 shadow-soft transition-all duration-200 placeholder:text-navy-300 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="min-h-[220px] w-full resize-y rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed text-zinc-100 transition-all duration-200 placeholder:text-zinc-600 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
-            <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-white/80 px-2 py-1 text-xs font-medium text-navy-400 backdrop-blur">
+            <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-ink-800/80 px-2 py-1 text-xs font-medium text-zinc-500 backdrop-blur">
               <FileText size={12} />
               {text.length.toLocaleString()} / {MAX_CONTRACT_CHARS.toLocaleString()}
             </div>
@@ -192,13 +192,13 @@ function TabButton({ active, onClick, icon, label }: TabButtonProps) {
       type="button"
       onClick={onClick}
       className={`relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
-        active ? "text-navy-900" : "text-navy-400 hover:text-navy-600"
+        active ? "text-white" : "text-zinc-400 hover:text-zinc-200"
       }`}
     >
       {active && (
         <motion.span
           layoutId="upload-tab"
-          className="absolute inset-0 rounded-lg bg-white shadow-soft"
+          className="absolute inset-0 rounded-lg bg-white/10"
           transition={{ type: "spring", stiffness: 380, damping: 30 }}
         />
       )}

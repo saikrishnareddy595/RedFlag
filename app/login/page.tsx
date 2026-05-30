@@ -10,12 +10,12 @@ import {
   ArrowLeft,
   Eye,
   EyeOff,
-  Flag,
   Loader2,
   Lock,
   Mail,
   User as UserIcon,
 } from "lucide-react";
+import { LogoMark } from "@/components/Logo";
 
 type Mode = "signin" | "signup";
 
@@ -86,17 +86,18 @@ function LoginInner() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-5 py-12">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-ink-950 px-5 py-12">
       {/* ambient color */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-[-20%] h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-brand-100/40 blur-3xl" />
-        <div className="absolute left-[10%] bottom-[5%] h-72 w-72 rounded-full bg-sky-100/50 blur-3xl" />
+        <div className="aurora animate-aurora absolute inset-0 opacity-70" />
+        <div className="absolute inset-x-0 top-0 h-[520px] spotlight" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.35] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]" />
       </div>
 
       <div className="w-full max-w-md">
         <Link
           href="/"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-navy-500 transition-colors hover:text-navy-800"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
         >
           <ArrowLeft size={16} />
           Back to home
@@ -106,19 +107,19 @@ function LoginInner() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-3xl border border-navy-100 bg-white p-8 shadow-elevated"
+          className="rounded-3xl border border-white/10 bg-ink-900/80 p-8 shadow-elevated backdrop-blur-xl"
         >
           <div className="mb-6 text-center">
-            <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-glow">
-              <Flag size={22} className="text-white" fill="white" />
+            <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center">
+              <LogoMark size={44} />
             </span>
-            <h1 className="text-2xl font-bold tracking-tight text-navy-900">
+            <h1 className="text-2xl font-bold tracking-tight text-white">
               {mode === "signin" ? "Welcome back" : "Create your account"}
             </h1>
-            <p className="mt-1 text-sm text-navy-500">
+            <p className="mt-1 text-sm text-zinc-400">
               {mode === "signin"
                 ? "Sign in to review your contracts with RedFlag."
-                : "Start spotting red flags in seconds."}
+                : "Start reading between the lines in seconds."}
             </p>
           </div>
 
@@ -128,7 +129,7 @@ function LoginInner() {
                 type="button"
                 onClick={handleGoogle}
                 disabled={googleLoading}
-                className="flex w-full items-center justify-center gap-3 rounded-xl border border-navy-200 bg-white px-4 py-3 text-sm font-semibold text-navy-700 shadow-soft transition-all hover:bg-navy-50 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-zinc-100 transition-all hover:bg-white/10 disabled:opacity-60"
               >
                 {googleLoading ? (
                   <Loader2 size={18} className="animate-spin" />
@@ -139,11 +140,11 @@ function LoginInner() {
               </button>
 
               <div className="my-5 flex items-center gap-3">
-                <span className="h-px flex-1 bg-navy-100" />
-                <span className="text-xs font-medium uppercase tracking-wide text-navy-300">
+                <span className="h-px flex-1 bg-white/10" />
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
                   or
                 </span>
-                <span className="h-px flex-1 bg-navy-100" />
+                <span className="h-px flex-1 bg-white/10" />
               </div>
             </>
           )}
@@ -172,11 +173,11 @@ function LoginInner() {
               required
             />
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-navy-700">
+              <label className="mb-1.5 block text-sm font-semibold text-zinc-200">
                 Password
               </label>
               <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400">
+                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
                   <Lock size={16} />
                 </span>
                 <input
@@ -186,12 +187,12 @@ function LoginInner() {
                   placeholder={mode === "signup" ? "At least 8 characters" : "••••••••"}
                   autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   required
-                  className="w-full rounded-xl border border-navy-200 bg-white py-3 pl-10 pr-11 text-sm text-navy-800 shadow-soft transition-all placeholder:text-navy-300 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-11 text-sm text-white transition-all placeholder:text-zinc-600 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -200,9 +201,9 @@ function LoginInner() {
             </div>
 
             {error && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3">
-                <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500" />
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="flex items-start gap-2.5 rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+                <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-400" />
+                <p className="text-sm text-red-300">{error}</p>
               </div>
             )}
 
@@ -220,7 +221,7 @@ function LoginInner() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-navy-500">
+          <p className="mt-6 text-center text-sm text-zinc-400">
             {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
               type="button"
@@ -228,7 +229,7 @@ function LoginInner() {
                 setMode(mode === "signin" ? "signup" : "signin");
                 setError(null);
               }}
-              className="font-semibold text-brand-600 hover:text-brand-700"
+              className="font-semibold text-brand-400 hover:text-brand-300"
             >
               {mode === "signin" ? "Sign up" : "Sign in"}
             </button>
@@ -236,11 +237,11 @@ function LoginInner() {
         </motion.div>
 
         {/* Demo credentials helper */}
-        <div className="mt-4 rounded-2xl border border-navy-100 bg-navy-50/60 p-4 text-center">
-          <p className="text-xs font-semibold text-navy-600">Demo account</p>
-          <p className="mt-1 text-xs text-navy-500">
-            <span className="font-mono">demo@redflag.app</span> ·{" "}
-            <span className="font-mono">demo1234</span>
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center">
+          <p className="text-xs font-semibold text-zinc-300">Demo account</p>
+          <p className="mt-1 text-xs text-zinc-500">
+            <span className="font-mono text-zinc-400">demo@redflag.app</span> ·{" "}
+            <span className="font-mono text-zinc-400">demo1234</span>
           </p>
         </div>
       </div>
@@ -271,9 +272,9 @@ function Field({
 }: FieldProps) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-semibold text-navy-700">{label}</label>
+      <label className="mb-1.5 block text-sm font-semibold text-zinc-200">{label}</label>
       <div className="relative">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400">
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
           {icon}
         </span>
         <input
@@ -283,7 +284,7 @@ function Field({
           placeholder={placeholder}
           autoComplete={autoComplete}
           required={required}
-          className="w-full rounded-xl border border-navy-200 bg-white py-3 pl-10 pr-3.5 text-sm text-navy-800 shadow-soft transition-all placeholder:text-navy-300 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-3.5 text-sm text-white transition-all placeholder:text-zinc-600 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
     </div>
@@ -317,7 +318,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="flex min-h-screen items-center justify-center bg-ink-950">
           <Loader2 size={26} className="animate-spin text-brand-500" />
         </div>
       }

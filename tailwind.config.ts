@@ -33,16 +33,25 @@ const config: Config = {
           800: "#9f1239",
           900: "#881337",
         },
+        ink: {
+          DEFAULT: "#0a0b0f",
+          950: "#08090c",
+          900: "#0a0b0f",
+          800: "#101218",
+          700: "#16181f",
+          600: "#1d2029",
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-inter)", "ui-sans-serif", "sans-serif"],
       },
       boxShadow: {
-        soft: "0 2px 8px -2px rgba(16, 42, 67, 0.08), 0 4px 16px -4px rgba(16, 42, 67, 0.06)",
-        card: "0 1px 3px rgba(16, 42, 67, 0.06), 0 8px 24px -8px rgba(16, 42, 67, 0.12)",
-        elevated: "0 4px 12px rgba(16, 42, 67, 0.08), 0 20px 48px -12px rgba(16, 42, 67, 0.18)",
-        glow: "0 0 0 1px rgba(244, 63, 94, 0.1), 0 8px 32px -8px rgba(244, 63, 94, 0.25)",
+        soft: "0 2px 8px -2px rgba(0, 0, 0, 0.4), 0 4px 16px -4px rgba(0, 0, 0, 0.3)",
+        card: "0 1px 3px rgba(0, 0, 0, 0.4), 0 12px 32px -10px rgba(0, 0, 0, 0.6)",
+        elevated: "0 8px 24px -8px rgba(0, 0, 0, 0.6), 0 32px 64px -16px rgba(0, 0, 0, 0.7)",
+        glow: "0 0 0 1px rgba(244, 63, 94, 0.25), 0 12px 48px -8px rgba(244, 63, 94, 0.45)",
+        "glow-lg": "0 0 80px -10px rgba(244, 63, 94, 0.5)",
       },
       backgroundImage: {
         "grid-pattern":

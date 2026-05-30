@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Flag, FileSearch, Inbox } from "lucide-react";
+import { ArrowLeft, FileSearch, Inbox } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { RiskFlag } from "@/components/RiskFlag";
 import { RiskSummary } from "@/components/RiskSummary";
 import { DownloadReport } from "@/components/DownloadReport";
@@ -69,8 +70,8 @@ export default function ResultsPage() {
 
   if (!hydrated || !result) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <FileSearch size={28} className="animate-pulse text-navy-300" />
+      <div className="flex min-h-screen items-center justify-center bg-ink-950">
+        <FileSearch size={28} className="animate-pulse text-zinc-600" />
       </div>
     );
   }
@@ -80,32 +81,25 @@ export default function ResultsPage() {
     result.contract_type;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-ink-950">
       {/* Top bar */}
-      <header className="sticky top-0 z-20 border-b border-navy-100 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-ink-950/70 backdrop-blur-xl">
         <div className="container-page flex h-16 items-center justify-between">
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-navy-600 transition-colors hover:text-navy-900"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-400 transition-colors hover:text-white"
           >
             <ArrowLeft size={17} />
             New analysis
           </button>
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600">
-              <Flag size={15} className="text-white" fill="white" />
-            </span>
-            <span className="text-base font-bold tracking-tight text-navy-900">
-              Red<span className="text-brand-500">Flag</span>
-            </span>
-          </div>
+          <Logo size={28} />
         </div>
       </header>
 
       <main className="container-page space-y-6 py-8 sm:py-10">
-        <div className="flex items-center gap-2 text-sm text-navy-400">
-          <span className="rounded-md bg-navy-100 px-2 py-0.5 text-xs font-semibold text-navy-600">
+        <div className="flex items-center gap-2 text-sm text-zinc-500">
+          <span className="rounded-md bg-white/5 px-2 py-0.5 text-xs font-semibold text-zinc-300">
             {typeLabel}
           </span>
           <span>·</span>
@@ -116,22 +110,20 @@ export default function ResultsPage() {
 
         {/* Filter bar */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="inline-flex items-center gap-1 rounded-xl border border-navy-200 bg-white p-1 shadow-soft">
+          <div className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 p-1">
             {FILTERS.map((f) => (
               <button
                 key={f.value}
                 type="button"
                 onClick={() => setFilter(f.value)}
                 className={`relative rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${
-                  filter === f.value
-                    ? "text-white"
-                    : "text-navy-500 hover:text-navy-800"
+                  filter === f.value ? "text-ink-950" : "text-zinc-400 hover:text-white"
                 }`}
               >
                 {filter === f.value && (
                   <motion.span
                     layoutId="filter-pill"
-                    className="absolute inset-0 rounded-lg bg-navy-900"
+                    className="absolute inset-0 rounded-lg bg-white"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -139,9 +131,7 @@ export default function ResultsPage() {
                   {f.label}
                   <span
                     className={`rounded-full px-1.5 text-xs ${
-                      filter === f.value
-                        ? "bg-white/20 text-white"
-                        : "bg-navy-100 text-navy-500"
+                      filter === f.value ? "bg-ink-950/15 text-ink-950" : "bg-white/10 text-zinc-400"
                     }`}
                   >
                     {counts[f.value]}
@@ -164,12 +154,12 @@ export default function ResultsPage() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-navy-200 bg-white py-16 text-center">
-            <Inbox size={32} className="mb-3 text-navy-300" />
-            <p className="text-sm font-semibold text-navy-700">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.03] py-16 text-center">
+            <Inbox size={32} className="mb-3 text-zinc-600" />
+            <p className="text-sm font-semibold text-zinc-200">
               No {filter !== "all" ? filter : ""} risk flags
             </p>
-            <p className="mt-1 text-sm text-navy-400">
+            <p className="mt-1 text-sm text-zinc-500">
               {sortedFlags.length === 0
                 ? "The AI did not flag any clauses in this contract."
                 : "Try a different severity filter."}
