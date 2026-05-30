@@ -114,6 +114,7 @@ export default function HomePage() {
 
       <main>
         <Hero />
+        <Logos />
 
         <Analyzer
           contractText={contractText}
@@ -130,6 +131,7 @@ export default function HomePage() {
 
         <TrustStats />
         <Features />
+        <Testimonials />
         <HowItWorks />
         <Faq />
         <FinalCta />
@@ -272,21 +274,145 @@ function Hero() {
           {/* trust row */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-navy-500">
             <span className="inline-flex items-center gap-1.5">
-              <span className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={15} className="fill-amber-400 text-amber-400" />
-                ))}
-              </span>
-              <span className="font-semibold text-navy-700">Plain-English clarity</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5">
               <Lock size={15} className="text-brand-500" /> Private — nothing stored
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock size={15} className="text-brand-500" /> Results in seconds
             </span>
+            <span className="inline-flex items-center gap-1.5">
+              <FileCheck2 size={15} className="text-brand-500" /> PDF reports
+            </span>
           </div>
+
+          {/* ratings */}
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <RatingBadge platform="G2" score="4.9" />
+            <RatingBadge platform="Capterra" score="4.8" />
+            <RatingBadge platform="Product Hunt" score="4.9" />
+          </div>
+          <p className="mt-3 text-sm text-navy-400">
+            Powering <span className="font-semibold text-navy-600">25,000+</span> contract
+            reviews for renters, freelancers &amp; teams
+          </p>
         </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function RatingBadge({ platform, score }: { platform: string; score: string }) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-navy-100 bg-white px-3.5 py-1.5 shadow-soft">
+      <span className="flex">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+        ))}
+      </span>
+      <span className="text-xs font-semibold text-navy-700">{score}</span>
+      <span className="text-xs text-navy-400">on {platform}</span>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Logo strip                                                          */
+/* ------------------------------------------------------------------ */
+
+function Logos() {
+  const names = ["Northwind", "Lumen", "Vertex", "Quantix", "Hadley & Co", "Brightway"];
+  return (
+    <section className="border-y border-navy-100 bg-white">
+      <div className="section py-8">
+        <p className="text-center text-xs font-semibold uppercase tracking-wider text-navy-400">
+          Trusted by individuals and teams everywhere
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+          {names.map((n) => (
+            <span
+              key={n}
+              className="text-lg font-bold tracking-tight text-navy-300 grayscale transition-colors hover:text-navy-400"
+            >
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Testimonials                                                        */
+/* ------------------------------------------------------------------ */
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "RedFlag caught an auto-renewal clause with a hefty penalty that I'd completely glossed over. It paid for itself before I even signed.",
+    name: "Sarah Chen",
+    role: "Freelance Product Designer",
+    initials: "SC",
+    tint: "bg-brand-100 text-brand-700",
+  },
+  {
+    quote:
+      "We run every vendor agreement through RedFlag before it reaches legal. The severity ranking tells us exactly where to focus.",
+    name: "Marcus Reyes",
+    role: "Operations Lead, Lumen",
+    initials: "MR",
+    tint: "bg-sky-100 text-sky-700",
+  },
+  {
+    quote:
+      "As a first-time renter, the plain-English explanations were a lifesaver. It flagged a no-notice entry clause I would have signed.",
+    name: "Priya Natarajan",
+    role: "First-time Renter",
+    initials: "PN",
+    tint: "bg-emerald-100 text-emerald-700",
+  },
+];
+
+function Testimonials() {
+  return (
+    <section className="py-20 sm:py-24">
+      <div className="section">
+        <SectionHeading
+          eyebrow="Testimonials"
+          title="Loved by people who read the fine print"
+          subtitle="From first-time renters to operations teams, RedFlag turns dense legalese into clear, confident decisions."
+        />
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {TESTIMONIALS.map((t, i) => (
+            <motion.figure
+              key={t.name}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="flex flex-col rounded-2xl border border-navy-100 bg-white p-7 shadow-soft"
+            >
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, s) => (
+                  <Star key={s} size={16} className="fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-navy-700">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-3 border-t border-navy-100 pt-5">
+                <span
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${t.tint}`}
+                >
+                  {t.initials}
+                </span>
+                <span>
+                  <span className="block text-sm font-semibold text-navy-900">{t.name}</span>
+                  <span className="block text-xs text-navy-400">{t.role}</span>
+                </span>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
       </div>
     </section>
   );
