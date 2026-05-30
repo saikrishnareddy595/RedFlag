@@ -45,7 +45,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  // NextAuth requires a secret in production to sign session tokens. Prefer the
+  // NEXTAUTH_SECRET env var; the fallback below keeps the demo working on Vercel
+  // without extra setup. IMPORTANT: set a real NEXTAUTH_SECRET in production so
+  // sessions can't be forged.
+  secret:
+    process.env.NEXTAUTH_SECRET ||
+    "redflag-demo-fallback-secret-please-override-in-production-7f3a9c1e",
 };
 
 export const isGoogleEnabled = googleEnabled;
