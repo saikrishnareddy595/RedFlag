@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
@@ -11,6 +13,7 @@ import {
   Flag,
   Gauge,
   Lock,
+  LogOut,
   Menu,
   Minus,
   Plus,
@@ -35,6 +38,7 @@ const LOADING_MESSAGES = [
 
 export default function HomePage() {
   const router = useRouter();
+  const { status } = useSession();
   const [contractText, setContractText] = useState("");
   const [contractType, setContractType] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -58,6 +62,13 @@ export default function HomePage() {
 
   async function handleAnalyze() {
     if (!canAnalyze || isLoading) return;
+
+    // Require sign-in before running an analysis.
+    if (status !== "authenticated") {
+      router.push(`/login?callbackUrl=${encodeURIComponent("/#analyze")}`);
+      return;
+    }
+
     setError(null);
     setIsLoading(true);
     setLoadingMsg(LOADING_MESSAGES[0]);
@@ -150,6 +161,15 @@ export default function HomePage() {
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const authed = status === "authenticated";
+  const displayName = session?.user?.name || session?.user?.email || "Account";
+  const initials = displayName
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join("");
   const links = [
     { href: "#features", label: "Features" },
     { href: "#how", label: "How it works" },
@@ -179,11 +199,38 @@ function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <a href="#analyze" className="btn-dark">
-            Analyze a contract
-            <ArrowRight size={16} />
-          </a>
+        <div className="hidden items-center gap-3 md:flex">
+          {authed ? (
+            <div className="flex items-center gap-2.5">
+              <span className="flex items-center gap-2 rounded-full border border-navy-100 bg-white py-1 pl-1 pr-3 shadow-soft">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-xs font-bold text-white">
+                  {initials}
+                </span>
+                <span className="max-w-[140px] truncate text-sm font-medium text-navy-700">
+                  {displayName}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-navy-400 transition-colors hover:bg-navy-50 hover:text-navy-700"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut size={17} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link href="/login" className="btn-ghost">
+                Sign in
+              </Link>
+              <a href="#analyze" className="btn-dark">
+                Analyze a contract
+                <ArrowRight size={16} />
+              </a>
+            </>
+          )}
         </div>
 
         <button
@@ -215,9 +262,42 @@ function Navbar() {
                   {l.label}
                 </a>
               ))}
-              <a href="#analyze" onClick={() => setOpen(false)} className="btn-dark mt-2 w-full">
-                Analyze a contract
-              </a>
+              {authed ? (
+                <>
+                  <div className="mt-1 flex items-center gap-2.5 rounded-lg bg-navy-50 px-3 py-2.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-xs font-bold text-white">
+                      {initials}
+                    </span>
+                    <span className="truncate text-sm font-medium text-navy-700">
+                      {displayName}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                    className="btn-secondary mt-1 w-full"
+                  >
+                    <LogOut size={16} />
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="btn-secondary mt-1 w-full"
+                  >
+                    Sign in
+                  </Link>
+                  <a href="#analyze" onClick={() => setOpen(false)} className="btn-dark w-full">
+                    Analyze a contract
+                  </a>
+                </>
+              )}
             </div>
           </motion.div>
         )}
