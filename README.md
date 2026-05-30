@@ -46,7 +46,7 @@ risk report — in seconds.
 | --- | --- |
 | Framework | **Next.js 14** (App Router, TypeScript, strict mode) |
 | Styling | **Tailwind CSS** + Framer Motion + lucide-react |
-| LLM | **NVIDIA NIM API** — `meta/llama-3.1-70b-instruct` |
+| LLM | **NVIDIA NIM API** — `meta/llama-3.1-8b-instruct` (override via `NVIDIA_MODEL`) |
 | File parsing | **pdf.js** (PDF) · **mammoth** (DOCX) — client-side |
 | PDF export | **jsPDF** |
 | Hosting | **Vercel** (serverless) |
@@ -77,9 +77,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. 🎉
 ### 🔑 Getting an NVIDIA API key (free)
 
 1. Go to **[build.nvidia.com](https://build.nvidia.com)** and sign in.
-2. Open the **`meta / llama-3.1-70b-instruct`** model.
+2. Open the **`meta / llama-3.1-8b-instruct`** model (fast and reliable on the free tier).
 3. Click **"Get API Key"** and copy the key (it starts with `nvapi-`).
 4. Paste it into `.env.local` as `NVIDIA_API_KEY`.
+
+> Want a different model? Set `NVIDIA_MODEL` (e.g. `meta/llama-3.1-70b-instruct`) — note larger models are slower and may exceed serverless timeouts on the free tier.
 
 The free tier includes generous credits — plenty to evaluate RedFlag.
 
