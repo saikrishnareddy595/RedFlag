@@ -37,7 +37,6 @@ const LOADING_MESSAGES = [
 
 export default function HomePage() {
   const router = useRouter();
-  const { status } = useSession();
   const [contractText, setContractText] = useState("");
   const [contractType, setContractType] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -61,11 +60,6 @@ export default function HomePage() {
 
   async function handleAnalyze() {
     if (!canAnalyze || isLoading) return;
-
-    if (status !== "authenticated") {
-      router.push(`/login?callbackUrl=${encodeURIComponent("/#analyze")}`);
-      return;
-    }
 
     setError(null);
     setIsLoading(true);
