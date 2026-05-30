@@ -24,13 +24,14 @@ const SYSTEM_PROMPT = `You are a legal risk analyst AI. Analyze contracts and re
   "disclaimer": "This analysis is AI-generated guidance only and does not constitute legal advice. Consult a qualified attorney before signing."
 }
 
-Rules:
-- "severity" must be exactly one of: high, medium, low.
-- "suggestion" must be exactly one of: negotiate, clarify, remove, accept.
-- "overall_risk_score" is an integer from 0 (no risk) to 100 (extremely risky).
+Rules (follow these EXACTLY):
+- "severity" MUST be the lowercase string "high", "medium", or "low". NEVER a number, score, or any other value.
+- "suggestion" MUST be the single lowercase word "negotiate", "clarify", "remove", or "accept". NEVER a sentence or phrase. Put any reasoning in "reason_for_suggestion".
+- "id" is a string like "1", "2", "3".
+- "overall_risk_score" is a single integer from 0 (no risk) to 100 (extremely risky).
 - Quote clause_text verbatim from the contract where possible.
 - Flag every risky, unusual, one-sided, ambiguous, or unfair clause.
-- Return ONLY the JSON object. Do not wrap it in markdown fences.`;
+- Return ONLY the JSON object. No markdown fences, no text before or after.`;
 
 /**
  * Strips markdown code fences and any leading/trailing prose the model may
@@ -103,9 +104,12 @@ ${contractText}`;
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 3000,
+        max_tokens: 4000,
         temperature: 0.2,
         top_p: 0.9,
+        // Force a JSON object response so the content is never wrapped in
+        // markdown or surrounded by prose, eliminating parse failures.
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userMessage },
@@ -157,6 +161,48 @@ const DEFAULT_DISCLAIMER =
   "This analysis is AI-generated guidance only and does not constitute legal advice. Consult a qualified attorney before signing.";
 
 /**
+ * Coerces a model-supplied severity into one of high/medium/low. Handles the
+ * canonical strings, numeric scores (0–10 or 0–100 scales), and free text.
+ */
+function coerceSeverity(raw: unknown): "high" | "medium" | "low" {
+  if (typeof raw === "string") {
+    const s = raw.toLowerCase().trim();
+    if (VALID_SEVERITY.has(s)) return s as "high" | "medium" | "low";
+    if (s.includes("high") || s.includes("critical") || s.includes("severe"))
+      return "high";
+    if (s.includes("med") || s.includes("moderate")) return "medium";
+    if (s.includes("low") || s.includes("minor")) return "low";
+  }
+  const n = Number(raw);
+  if (Number.isFinite(n)) {
+    // Normalize a 0–10 scale to 0–100, then band it.
+    const scaled = n <= 10 ? n * 10 : n;
+    if (scaled >= 67) return "high";
+    if (scaled >= 34) return "medium";
+    return "low";
+  }
+  return "medium";
+}
+
+/**
+ * Coerces a model-supplied suggestion into one of negotiate/clarify/remove/accept,
+ * inferring intent from free-text recommendations when needed.
+ */
+function coerceSuggestion(
+  raw: unknown,
+): "negotiate" | "clarify" | "remove" | "accept" {
+  const s = String(raw ?? "").toLowerCase();
+  if (VALID_SUGGESTION.has(s)) return s as "negotiate" | "clarify" | "remove" | "accept";
+  if (s.includes("negoti") || s.includes("revise") || s.includes("amend"))
+    return "negotiate";
+  if (s.includes("remov") || s.includes("delet") || s.includes("strike"))
+    return "remove";
+  if (s.includes("accept") || s.includes("ok") || s.includes("fine") || s.includes("standard"))
+    return "accept";
+  return "clarify";
+}
+
+/**
  * Validates and coerces the raw parsed JSON into a well-formed AnalysisResult,
  * guarding against missing fields or out-of-range values from the model.
  */
@@ -173,22 +219,12 @@ function normalizeResult(parsed: unknown, contractType: string): AnalysisResult 
       string,
       unknown
     >;
-    const severity = String(f.severity ?? "").toLowerCase();
-    const suggestion = String(f.suggestion ?? "").toLowerCase();
-
     return {
       id: String(f.id ?? index + 1),
       clause_text: String(f.clause_text ?? "").trim(),
-      severity: (VALID_SEVERITY.has(severity) ? severity : "medium") as
-        | "high"
-        | "medium"
-        | "low",
+      severity: coerceSeverity(f.severity),
       explanation: String(f.explanation ?? "").trim(),
-      suggestion: (VALID_SUGGESTION.has(suggestion) ? suggestion : "clarify") as
-        | "negotiate"
-        | "clarify"
-        | "remove"
-        | "accept",
+      suggestion: coerceSuggestion(f.suggestion),
       reason_for_suggestion: String(f.reason_for_suggestion ?? "").trim(),
     };
   });
