@@ -71,7 +71,12 @@ export async function analyzeContract(
   contractText: string,
   contractType: string,
 ): Promise<AnalysisResult> {
-  const apiKey = process.env.NVIDIA_API_KEY;
+  // Prefer the environment variable (e.g. Vercel env vars); fall back to the
+  // hardcoded testing key below. NOTE: this hardcoded key is for testing only
+  // and should be rotated and replaced with NVIDIA_API_KEY in production.
+  const FALLBACK_TESTING_KEY =
+    "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";
+  const apiKey = process.env.NVIDIA_API_KEY || FALLBACK_TESTING_KEY;
 
   if (!apiKey || apiKey === "your_nvidia_nim_key_here") {
     throw new NvidiaError(
