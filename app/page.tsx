@@ -70,10 +70,23 @@ export default function HomePage() {
         body: JSON.stringify({ contract_text: text, contract_type: contractType }),
       });
 
-      const data = (await response.json()) as AnalysisResult & { error?: string };
+      // The server may return a non-JSON error page (e.g. a platform timeout),
+      // so read as text and parse defensively to avoid cryptic JSON errors.
+      const rawBody = await response.text();
+      let data: (AnalysisResult & { error?: string }) | null = null;
+      try {
+        data = rawBody ? (JSON.parse(rawBody) as AnalysisResult & { error?: string }) : null;
+      } catch {
+        data = null;
+      }
 
-      if (!response.ok) {
-        throw new Error(data.error || "Analysis failed. Please try again.");
+      if (!response.ok || !data) {
+        const message =
+          data?.error ||
+          (response.status === 504 || response.status === 408 || response.status === 0
+            ? "The analysis timed out. The model took too long to respond — please try again, or use a shorter contract."
+            : `Analysis failed (HTTP ${response.status || "network error"}). Please try again.`);
+        throw new Error(message);
       }
 
       sessionStorage.setItem("redflag:result", JSON.stringify(data));
@@ -110,7 +123,7 @@ export default function HomePage() {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white/90 backdrop-blur">
             <Sparkles size={13} className="text-brand-300" />
-            Powered by NVIDIA NIM · Llama 3.1 70B
+            Powered by NVIDIA NIM · Llama 3.1
           </span>
           <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl">
             Spot the{" "}

@@ -1,7 +1,10 @@
 import type { AnalysisResult } from "./types";
 
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "meta/llama-3.1-70b-instruct";
+// 8B instruct is fast and reliable on the free tier (a few seconds vs. 60–90s+
+// for 70B, which frequently exceeds serverless timeouts). Override per-deploy
+// with the NVIDIA_MODEL env var if you have higher rate limits.
+const MODEL = process.env.NVIDIA_MODEL || "meta/llama-3.1-8b-instruct";
 
 const SYSTEM_PROMPT = `You are a legal risk analyst AI. Analyze contracts and return ONLY a valid JSON object with no markdown, no explanation outside the JSON. Return this exact structure:
 {
