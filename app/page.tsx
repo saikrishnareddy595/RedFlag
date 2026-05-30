@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -19,7 +19,6 @@ import {
   Plus,
   ScanSearch,
   ShieldCheck,
-  Sparkles,
   Star,
   Wand2,
   X,
@@ -313,48 +312,62 @@ function Navbar() {
 function Hero() {
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* soft ambient color */}
+      {/* animated aurora + grid */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-[-10%] h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-brand-100/40 blur-3xl" />
-        <div className="absolute left-[12%] top-[20%] h-72 w-72 rounded-full bg-sky-100/50 blur-3xl" />
+        <div className="aurora animate-aurora absolute inset-0" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.5] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]" />
+        <div className="absolute left-[8%] top-[18%] h-3 w-3 animate-float rounded-full bg-brand-400/60" />
+        <div className="absolute right-[12%] top-[30%] h-2.5 w-2.5 animate-float-slow rounded-full bg-sky-400/60" />
+        <div className="absolute left-[20%] bottom-[14%] h-2 w-2 animate-float rounded-full bg-amber-400/60" />
       </div>
 
-      <div className="section pb-12 pt-16 text-center sm:pt-24">
+      <div className="section grid items-center gap-12 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+        {/* Copy */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center lg:text-left"
         >
           <span className="eyebrow">
-            <Sparkles size={13} className="text-brand-500" />
-            AI Contract Risk Review · Powered by NVIDIA NIM
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-brand-400" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
+            </span>
+            AI Contract Risk Review
           </span>
 
-          <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-bold leading-[1.08] tracking-tight text-navy-900 sm:text-5xl md:text-6xl">
+          <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.06] tracking-tight text-navy-900 sm:text-5xl lg:text-6xl">
             Spot the <span className="text-gradient">red flags</span> before you sign
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg leading-relaxed text-navy-500">
-            Paste or upload any contract and let AI surface risky clauses, rank them by
-            severity, and explain each one in plain English — with an instant, downloadable
-            risk report.
+          <p className="mx-auto mt-5 max-w-xl text-balance text-lg leading-relaxed text-navy-500 lg:mx-0">
+            Upload any contract and our AI surfaces risky clauses, ranks them by severity,
+            and explains each one in plain English — with an instant, downloadable report.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="#analyze" className="btn-primary px-7 py-3.5 text-base">
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+            <a href="#analyze" className="btn-primary group px-7 py-3.5 text-base">
               <Wand2 size={18} />
               Analyze a contract
+              <ArrowRight
+                size={18}
+                className="transition-transform duration-200 group-hover:translate-x-0.5"
+              />
             </a>
             <a href="#how" className="btn-ghost text-base">
               See how it works
-              <ArrowRight size={16} />
             </a>
           </div>
 
-          {/* trust row */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-navy-500">
+          {/* ratings */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <RatingBadge platform="G2" score="4.9" />
+            <RatingBadge platform="Capterra" score="4.8" />
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-navy-500 lg:justify-start">
             <span className="inline-flex items-center gap-1.5">
-              <Lock size={15} className="text-brand-500" /> Private — nothing stored
+              <Lock size={15} className="text-brand-500" /> Nothing stored
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock size={15} className="text-brand-500" /> Results in seconds
@@ -363,21 +376,200 @@ function Hero() {
               <FileCheck2 size={15} className="text-brand-500" /> PDF reports
             </span>
           </div>
+        </motion.div>
 
-          {/* ratings */}
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <RatingBadge platform="G2" score="4.9" />
-            <RatingBadge platform="Capterra" score="4.8" />
-            <RatingBadge platform="Product Hunt" score="4.9" />
-          </div>
-          <p className="mt-3 text-sm text-navy-400">
-            Powering <span className="font-semibold text-navy-600">25,000+</span> contract
-            reviews for renters, freelancers &amp; teams
-          </p>
+        {/* Live product preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <HeroPreview />
         </motion.div>
       </div>
     </section>
   );
+}
+
+/**
+ * A self-running, looping mock of RedFlag analyzing a contract — flags pop in
+ * sequentially and the risk score climbs, conveying the product in motion.
+ */
+function HeroPreview() {
+  const FLAGS = [
+    {
+      sev: "high" as const,
+      text: "Landlord may enter the premises at any time without notice.",
+      action: "Negotiate",
+      dot: "bg-red-500",
+      chip: "bg-red-50 text-red-700 border-red-200",
+      bar: "bg-red-400",
+    },
+    {
+      sev: "high" as const,
+      text: "Tenant waives all rights to a security-deposit refund.",
+      action: "Remove",
+      dot: "bg-red-500",
+      chip: "bg-red-50 text-red-700 border-red-200",
+      bar: "bg-red-400",
+    },
+    {
+      sev: "medium" as const,
+      text: "Lease auto-renews for 5 years with a $5,000 penalty.",
+      action: "Clarify",
+      dot: "bg-amber-400",
+      chip: "bg-blue-50 text-blue-700 border-blue-200",
+      bar: "bg-amber-400",
+    },
+  ];
+  const SCORES = [0, 34, 61, 82];
+
+  const [visible, setVisible] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setVisible((v) => (v >= FLAGS.length ? 0 : v + 1));
+    }, 1500);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const score = useEase(SCORES[visible]);
+  const radius = 26;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const scoreColor = score > 70 ? "#ef4444" : score >= 40 ? "#eab308" : "#22c55e";
+
+  return (
+    <div className="relative mx-auto max-w-md">
+      {/* floating accent chips */}
+      <div className="absolute -left-4 top-10 z-10 hidden animate-float rounded-xl border border-navy-100 bg-white px-3 py-2 shadow-elevated sm:block">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-navy-400">
+          Flags found
+        </p>
+        <p className="text-lg font-bold text-navy-900">{visible}</p>
+      </div>
+      <div className="absolute -right-3 bottom-16 z-10 hidden animate-float-slow items-center gap-2 rounded-xl border border-navy-100 bg-white px-3 py-2 shadow-elevated sm:flex">
+        <ShieldCheck size={16} className="text-green-500" />
+        <span className="text-xs font-semibold text-navy-700">Privacy-first</span>
+      </div>
+
+      {/* main card */}
+      <div className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-elevated">
+        <div className="flex items-center justify-between border-b border-navy-100 bg-navy-50/60 px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-brand-600 shadow-soft">
+              <FileCheck2 size={15} />
+            </span>
+            <span className="text-sm font-semibold text-navy-800">Lease_Agreement.pdf</span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-navy-500 shadow-soft">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
+            </span>
+            Analyzing
+          </span>
+        </div>
+
+        <div className="p-5">
+          {/* score + summary */}
+          <div className="mb-4 flex items-center gap-4 rounded-2xl border border-navy-100 bg-navy-50/40 p-4">
+            <div className="relative h-16 w-16 shrink-0">
+              <svg className="h-full w-full -rotate-90" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r={radius} fill="none" strokeWidth="7" className="stroke-navy-100" />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r={radius}
+                  fill="none"
+                  strokeWidth="7"
+                  strokeLinecap="round"
+                  stroke={scoreColor}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-navy-900">
+                {score}
+              </span>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-navy-400">
+                Overall risk
+              </p>
+              <p className="text-sm font-medium text-navy-700">
+                {score > 70
+                  ? "High risk — review before signing"
+                  : score >= 40
+                    ? "Moderate risk detected"
+                    : "Scanning clauses…"}
+              </p>
+            </div>
+          </div>
+
+          {/* flags */}
+          <div className="space-y-2.5">
+            <AnimatePresence mode="popLayout">
+              {FLAGS.slice(0, visible).map((f, i) => (
+                <motion.div
+                  key={f.text}
+                  layout
+                  initial={{ opacity: 0, x: 12, scale: 0.97 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative overflow-hidden rounded-xl border border-navy-100 bg-white p-3 pl-4 shadow-soft"
+                >
+                  <span className={`absolute inset-y-0 left-0 w-1 ${f.bar}`} />
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2">
+                      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${f.dot}`} />
+                      <p className="text-xs leading-relaxed text-navy-700">{f.text}</p>
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${f.chip}`}
+                    >
+                      {f.action}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {/* skeleton placeholder for the next incoming flag */}
+            {visible < FLAGS.length && (
+              <div className="shimmer rounded-xl border border-dashed border-navy-100 bg-navy-50/40 p-3 pl-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-navy-200" />
+                  <span className="h-2.5 w-2/3 rounded bg-navy-100" />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Eases a displayed integer toward `target` whenever it changes. */
+function useEase(target: number, ms = 650): number {
+  const [value, setValue] = useState(target);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const from = value;
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / ms, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(from + (target - from) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target, ms]);
+  return value;
 }
 
 function RatingBadge({ platform, score }: { platform: string; score: string }) {
@@ -399,22 +591,26 @@ function RatingBadge({ platform, score }: { platform: string; score: string }) {
 /* ------------------------------------------------------------------ */
 
 function Logos() {
-  const names = ["Northwind", "Lumen", "Vertex", "Quantix", "Hadley & Co", "Brightway"];
+  const names = ["Northwind", "Lumen", "Vertex", "Quantix", "Hadley & Co", "Brightway", "Meridian", "Cobalt"];
+  // Duplicated so the marquee scrolls seamlessly.
+  const loop = [...names, ...names];
   return (
     <section className="border-y border-navy-100 bg-white">
       <div className="section py-8">
         <p className="text-center text-xs font-semibold uppercase tracking-wider text-navy-400">
           Trusted by individuals and teams everywhere
         </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          {names.map((n) => (
-            <span
-              key={n}
-              className="text-lg font-bold tracking-tight text-navy-300 grayscale transition-colors hover:text-navy-400"
-            >
-              {n}
-            </span>
-          ))}
+        <div className="marquee-mask mt-6 overflow-hidden">
+          <div className="flex w-max animate-marquee items-center gap-12">
+            {loop.map((n, i) => (
+              <span
+                key={`${n}-${i}`}
+                className="whitespace-nowrap text-lg font-bold tracking-tight text-navy-300 transition-colors hover:text-navy-500"
+              >
+                {n}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -613,22 +809,53 @@ function Analyzer({
 
 function TrustStats() {
   const stats = [
-    { value: "3", label: "Severity levels ranked" },
-    { value: "0–100", label: "Overall risk score" },
-    { value: "Seconds", label: "Not hours of review" },
-    { value: "100%", label: "Processed privately" },
+    { to: 25000, prefix: "", suffix: "+", label: "Contracts reviewed" },
+    { to: 100, prefix: "", suffix: "%", label: "Processed privately" },
+    { to: 3, prefix: "", suffix: "", label: "Severity levels ranked" },
+    { to: 30, prefix: "<", suffix: "s", label: "Average review time" },
   ];
   return (
     <section className="border-y border-navy-100 bg-navy-50/40">
-      <div className="section grid grid-cols-2 gap-6 py-10 md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="text-center">
-            <p className="text-3xl font-bold tracking-tight text-navy-900">{s.value}</p>
-            <p className="mt-1 text-sm text-navy-500">{s.label}</p>
-          </div>
+      <div className="section grid grid-cols-2 gap-6 py-12 md:grid-cols-4">
+        {stats.map((s, i) => (
+          <CountStat key={s.label} {...s} delay={i * 0.05} />
         ))}
       </div>
     </section>
+  );
+}
+
+function CountStat({
+  to,
+  prefix,
+  suffix,
+  label,
+  delay,
+}: {
+  to: number;
+  prefix: string;
+  suffix: string;
+  label: string;
+  delay: number;
+}) {
+  const [active, setActive] = useState(false);
+  const value = useEase(active ? to : 0, 1100);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay }}
+      onViewportEnter={() => setActive(true)}
+      className="text-center"
+    >
+      <p className="text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl">
+        {prefix}
+        {value.toLocaleString()}
+        {suffix}
+      </p>
+      <p className="mt-1 text-sm text-navy-500">{label}</p>
+    </motion.div>
   );
 }
 
@@ -850,10 +1077,25 @@ function FinalCta() {
               Get a clear, severity-ranked breakdown of any contract in seconds — free.
             </p>
             <div className="mt-8 flex justify-center">
-              <a href="#analyze" className="btn-primary px-8 py-4 text-base">
+              <a href="#analyze" className="btn-primary group px-8 py-4 text-base">
                 <Wand2 size={18} />
                 Analyze a contract now
+                <ArrowRight
+                  size={18}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                />
               </a>
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-navy-300">
+              <span className="inline-flex items-center gap-1.5">
+                <Lock size={13} className="text-brand-300" /> Encrypted in transit
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ShieldCheck size={13} className="text-brand-300" /> No data retention
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <FileCheck2 size={13} className="text-brand-300" /> GDPR-aligned
+              </span>
             </div>
           </div>
         </div>

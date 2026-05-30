@@ -100,4 +100,38 @@
   .text-gradient {
     @apply bg-gradient-to-r from-brand-500 via-brand-600 to-rose-500 bg-clip-text text-transparent;
   }
+
+  /* Slowly drifting aurora gradient, used behind the hero */
+  .aurora {
+    background-image: radial-gradient(
+        40% 60% at 20% 30%,
+        rgba(244, 63, 94, 0.18),
+        transparent 60%
+      ),
+      radial-gradient(40% 60% at 80% 20%, rgba(56, 189, 248, 0.16), transparent 60%),
+      radial-gradient(50% 60% at 60% 80%, rgba(168, 85, 247, 0.14), transparent 60%);
+    background-size: 200% 200%;
+  }
+
+  /* Fades the edges of the infinite logo marquee */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee,
+    .animate-aurora,
+    .animate-float,
+    .animate-float-slow,
+    .animate-pulse-ring {
+      animation: none !important;
+    }
+  }
 }
